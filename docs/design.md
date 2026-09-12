@@ -1,7 +1,7 @@
-# System Design: Urban Crisis Response Agent
+# System Design: Professional Urban Crisis Response Agent
 
 ## 1. High-Level Architecture
-The system is now designed as a decoupled **Client-Server architecture** to support professional cloud deployment.
+The system is a decoupled **Client-Server architecture** designed for high-fidelity simulation and autonomous multi-agent orchestration.
 
 ```mermaid
 graph TD
@@ -12,75 +12,84 @@ graph TD
     subgraph "Backend (FastAPI / Railway)"
         Gateway[FastAPI REST API]
         
-        subgraph "Agentic Core"
-            Graph[LangGraph State Machine]
-            LLM[Claude 3.5 Sonnet via OpenRouter]
+        subgraph "Multi-Agent Orchestrator"
+            Supervisor[Manager Agent]
+            Fire[Fire Worker Agent]
+            Med[Medical Worker Agent]
+            Pol[Police Worker Agent]
+            Ver[Verifier Agent]
         end
         
         subgraph "Simulation Layer"
-            Sim[City Simulator]
-            Tools[Tool Suite]
+            Sim[Graph-Based City Simulator]
+            Tools[Professional Tool Suite]
         end
     end
 
     Client <-->|HTTPS / JSON| Gateway
-    Gateway <--> Graph
-    Graph <--> Tools
+    Gateway <--> Supervisor
+    Supervisor <--> Fire
+    Supervisor <--> Med
+    Supervisor <--> Pol
+    Supervisor <--> Ver
+    
+    Fire <--> Tools
+    Med <--> Tools
+    Pol <--> Tools
     Tools <--> Sim
-    Graph <--> LLM
 ```
 
 ### Component Breakdown
-- **Frontend**: Handles the visual state of the city. It polls the `/state` endpoint to update the map and sends commands via `/emergency` and `/infrastructure`.
-- **Backend Gateway**: A FastAPI server that handles CORS, request validation, and provides an interface to the agent.
-- **Agentic Core**: Uses **LangGraph** to maintain a persistent state of the crisis and orchestrate actions.
-- **Simulation Layer**: A high-fidelity Python simulator that tracks unit positions and road statuses in real-time.
+- **Frontend**: A React-based dashboard using **Lucide Vector Icons** and a real-time city grid.
+- **Backend**: A FastAPI server providing a RESTful gateway to the agentic core.
+- **Agentic Core**: Implements a **Multi-Agent Supervisor Pattern** using **LangGraph** and **Claude 3.5 Sonnet**.
+- **Simulation Layer**: A **Graph-based Simulator** using **Dijkstra's Algorithm** for shortest-path routing and real-time obstacle avoidance.
 
-## 2. The Agentic Loop (LangGraph Workflow)
+## 2. The Multi-Agent Workflow
 
-The agent operates on a cyclic graph that ensures autonomy and error recovery.
+The system uses a hierarchical orchestration pattern to maximize specialization and verification.
 
 ```mermaid
 graph TD
-    S([START]) --> O[Observe Node]
-    O --> P[Plan Node]
-    P --> E{Evaluate}
+    S([START]) --> O[Observe City State]
+    O --> Supervisor[Supervisor Agent]
     
-    E -- "Execute Tool" --> T[ToolNode]
-    T --> O
+    Supervisor -- "Task: Fire" --> FW[Fire Worker]
+    Supervisor -- "Task: Medical" --> MW[Medical Worker]
+    Supervisor -- "Task: Police" --> PW[Police Worker]
+    Supervisor -- "Audit" --> V[Verifier Agent]
     
-    E -- "Incidents Open" --> O
-    E -- "Goal Met" --> END([END])
-
-    subgraph "Reasoning"
-        P
-    end
+    FW --> Tools[Tool Execution]
+    MW --> Tools
+    PW --> Tools
     
-    subgraph "Action"
-        T
-        O
-    end
+    Tools --> O
+    
+    V -- "Incomplete" --> Supervisor
+    V -- "COMPLETE" --> END([END])
 ```
 
-- **Observe Node**: Fetches current city telemetry and adds it to the state.
-- **Plan Node**: Claude 3.5 Sonnet reasons about the crisis and decides which tools to invoke.
-- **Execute Node**: Performs the physical action in the simulator (e.g., dispatching a unit).
-- **Evaluate Node**: Determines if the system needs to loop back to re-observe or if the crisis is resolved.
+- **Supervisor Agent**: The "Brain." Analyzes the crisis, prioritizes objectives, and delegates tasks to the correct specialist.
+- **Specialized Workers**: Agents dedicated to one domain. They utilize tools to dispatch units and monitor their specific goals.
+- **Verifier Agent**: The "Auditor." Performs a final check of the operations to ensure efficiency and resolution before closing the case.
 
-## 3. Tool Definitions
+## 3. Technical Innovations
+
+### Graph-Based Routing
+Unlike simple coordinate movement, the simulator now uses a **weighted graph**.
+- **Dijkstra's Algorithm**: Units calculate the mathematically shortest path to the incident.
+- **Dynamic Rerouting**: If a road is blocked during transit, the agent detects the failure and triggers a real-time path recalculation.
+
+### State-Machine Orchestration
+Using **LangGraph**, the agent maintains a persistent, shared state that allows:
+- **Cyclic Reasoning**: Continuous observation $\rightarrow$ planning $\rightarrow$ execution.
+- **Hierarchical Delegation**: Complex problems are broken down into specialized tasks.
+- **Closed-Loop Verification**: No case is closed without an independent audit by the Verifier agent.
+
+## 4. Tool Definitions
 | Tool | Input | Output | Description |
 |---|---|---|---|
-| `get_city_state` | None | JSON State | Current alerts, active units, and road statuses. |
-| `dispatch_unit` | `unit_id`, `target_id` | Success/Fail | Assigns a resource to an emergency. |
-| `block_road` | `road_id` | Success/Fail | Simulates a road blockage for testing adaptation. |
-| `add_emergency` | `type`, `loc`, `pri` | Incident ID | Adds a new emergency incident to the city. |
-
-## 4. Data Model
-- **Incident**: `{id, type, location, priority, status, timestamp}`
-- **Resource**: `{id, type, location, status, assigned_incident}`
-- **Road**: `{id, start, end, status}`
-
-## 5. Deployment Strategy
-- **Frontend**: Static site hosting on **Render**.
-- **Backend**: Containerized Python app on **Railway**.
-- **API**: RESTful communication over HTTPS with CORS enabled.
+| `get_city_state` | None | JSON State | Current alerts, unit paths, and road statuses. |
+| `dispatch_unit` | `unit_id`, `target_id` | Success/Fail | Calculates shortest path and assigns resource. |
+| `block_road` | `road_id` | Success/Fail | Simulates real-world disruption. |
+| `add_emergency` | `type`, `loc`, `pri` | Incident ID | Injects a new crisis into the graph. |
