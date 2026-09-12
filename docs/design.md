@@ -1,15 +1,37 @@
 # System Design: Urban Crisis Response Agent
 
 ## 1. High-Level Architecture
-The system is built using a cyclic state-machine architecture powered by **LangGraph** and **Claude 3.5 Sonnet**.
+The system is built using a cyclic state-machine architecture powered by **LangGraph** and **Claude 3.5 Sonnet (via OpenRouter)**.
 
 - **The City Simulator**: A background process that generates a stream of events and maintains the "ground truth" of the city (road status, unit positions).
 - **The Agentic Orchestrator (LangGraph)**: A directed cyclic graph (DCG) that manages the agent's state and determines the next action based on observations.
 - **The Tool Suite**: A set of LangChain-compatible tools that allow the agent to interact with the simulator.
 
 ## 2. The Agentic Loop (LangGraph Workflow)
-The agent follows a professional cyclic graph:
-`START` $\rightarrow$ `Observe` $\rightarrow$ `Plan` $\rightarrow$ `Execute` $\rightarrow$ `Evaluate` $\rightarrow$ `Observe` (Loop)
+
+The agent follows a professional cyclic graph designed for maximum autonomy and error recovery.
+
+```mermaid
+graph TD
+    Start([START]) --> Observe[Observe Node]
+    Observe --> Plan[Plan Node]
+    Plan --> Eval{Evaluate}
+    
+    Eval -- Tool Call --> Execute[Execute Node]
+    Execute --> Observe
+    
+    Eval -- Still Open --> Observe
+    Eval -- Goal Met --> End([END])
+
+    subgraph "Internal Reasoning (Claude 3.5)"
+        Plan
+    end
+    
+    subgraph "Environment Interaction"
+        Execute
+        Observe
+    end
+```
 
 - **Observe Node**: Ingests the latest city state and adds it to the conversation history as a HumanMessage.
 - **Plan Node**: Claude 3.5 Sonnet analyzes the state and decides which tools to call (e.g., `dispatch_unit`).

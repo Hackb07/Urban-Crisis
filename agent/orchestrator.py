@@ -5,7 +5,7 @@ from typing import Annotated, List, TypedDict, Dict, Any, Union
 from operator import add
 
 from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, ToolMessage
 from langchain_core.tools import tool
 from langgraph.graph import StateGraph, END, START
@@ -60,9 +60,11 @@ class UrbanGraph:
         self.tools = create_langchain_tools(city_tools)
         self.tool_node = ToolNode(self.tools)
 
-        # Initialize the LLM with tool binding
-        self.llm = ChatAnthropic(
-            model="claude-3-5-sonnet-20240620",
+        # Initialize the LLM using OpenRouter
+        self.llm = ChatOpenAI(
+            model="anthropic/claude-3.5-sonnet",
+            openai_api_key=os.getenv("OPENROUTER_API_KEY"),
+            openai_api_base="https://openrouter.ai/api/v1",
             temperature=0
         ).bind_tools(self.tools)
 

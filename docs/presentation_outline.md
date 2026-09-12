@@ -5,7 +5,7 @@
 
 ## Slide 1: Title Slide
 - **Title:** Urban Crisis Response Agent
-- **Subtitle:** Autonomous Resource Orchestration using LangGraph & Claude 3.5 Sonnet
+- **Subtitle:** Autonomous Resource Orchestration using LangGraph & Claude 3.5 Sonnet (via OpenRouter)
 - **Visual Suggestion:** A futuristic image of a smart city with connected emergency services.
 - **Key Points:** Team Name, Member Names, Tech Zephyr 4.0 | IIT Bhubaneswar.
 

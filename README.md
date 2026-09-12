@@ -1,9 +1,9 @@
-#  Urban Crisis Response Agent
+# Urban Crisis Response Agent
 **Autonomous Real-time Urban Crisis Response & Resource Orchestrator**
 
 A professional agentic system designed for the **Agentic AI Hackathon (Tech Zephyr 4.0 | IIT Bhubaneswar)**. This project demonstrates how an autonomous agent can manage a complex, evolving urban disaster scenario by interacting with a real-time simulator using a cyclic state-machine architecture.
 
-##  About the Project
+## About the Project
 
 The **Urban Crisis Response Agent** is not a chatbot; it is an autonomous operator. Its primary objective is to monitor a live stream of emergency events, prioritize them based on criticality, and orchestrate limited resources (Fire, Medical, Police) to resolve crises as efficiently as possible.
 
@@ -12,9 +12,20 @@ The **Urban Crisis Response Agent** is not a chatbot; it is an autonomous operat
 - **Real-time Adaptation:** Autonomously detecting and responding to disruptions, such as road closures or resource failures.
 - **Resource Optimization:** Maximizing lives saved and minimizing response time under strict constraints.
 
-###  Agentic Architecture
+### Agentic Architecture
+
 The system is powered by **LangGraph** and **Claude 3.5 Sonnet**, implementing a professional cyclic loop:
-`START` $\rightarrow$ `Observe` $\rightarrow$ `Plan` $\rightarrow$ `Execute` $\rightarrow$ `Evaluate` $\rightarrow$ `Observe` (Loop)
+
+```mermaid
+graph TD
+    A[START] --> B[Observe]
+    B --> C[Plan]
+    C --> D{Evaluate}
+    D -- Tool Calls Needed --> E[Execute]
+    E --> B
+    D -- Incidents Open --> B
+    D -- Goal Met --> F[END]
+```
 
 - **Observe**: Ingests the latest city state (telemetry).
 - **Plan**: Claude reasons about priorities and selects the best tools.
@@ -23,12 +34,12 @@ The system is powered by **LangGraph** and **Claude 3.5 Sonnet**, implementing a
 
 ---
 
-##  Getting Started
+## Getting Started
 
 ### Prerequisites
 - Python 3.10+
 - `uv` installed (`pip install uv`)
-- An Anthropic API Key
+- An OpenRouter API Key
 
 ### Installation & Setup
 1. Clone the repository:
@@ -38,7 +49,7 @@ The system is powered by **LangGraph** and **Claude 3.5 Sonnet**, implementing a
    ```
 2. Set up your API key in the `.env` file:
    ```text
-   ANTHROPIC_API_KEY=your_api_key_here
+   OPENROUTER_API_KEY=your_openrouter_api_key_here
    ```
 
 ### Running the Application
@@ -62,7 +73,7 @@ uv run python stress_test.py
 
 ---
 
-##  Project Documentation
+## Project Documentation
 
 Detailed specifications and guides are available in the `docs/` folder:
 
@@ -73,11 +84,11 @@ Detailed specifications and guides are available in the `docs/` folder:
 
 ---
 
-##  Key Features
--  **Real-time Simulation**: A background city simulator with dynamic incidents.
--  **Autonomous Reasoning**: Claude 3.5 Sonnet for high-level decision making.
--  **Dynamic Adaptation**: Ability to reroute units when environmental conditions change.
--  **Visual Orchestration**: A professional dashboard for monitoring agent behavior.
+## Key Features
+- **Real-time Simulation**: A background city simulator with dynamic incidents.
+- **Autonomous Reasoning**: Claude 3.5 Sonnet for high-level decision making.
+- **Dynamic Adaptation**: Ability to reroute units when environmental conditions change.
+- **Visual Orchestration**: A professional dashboard for monitoring agent behavior.
 
-##  License
+## License
 This project is developed for the Tech Zephyr 4.0 Agentic AI Hackathon.
