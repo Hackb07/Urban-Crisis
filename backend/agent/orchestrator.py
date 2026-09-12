@@ -10,7 +10,7 @@ from langchain_core.tools import tool
 from langgraph.graph import StateGraph, END, START
 from langgraph.prebuilt import ToolNode
 
-from backend.tools.city_tools import CityTools
+from tools.city_tools import CityTools
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("ProfessionalUrbanAgent")

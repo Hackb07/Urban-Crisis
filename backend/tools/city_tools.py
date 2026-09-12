@@ -1,4 +1,4 @@
-from backend.simulator.city_sim import CitySimulator
+from simulator.city_sim import CitySimulator
 
 class CityTools:
     def __init__(self, simulator: CitySimulator):

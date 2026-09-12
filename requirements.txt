@@ -1,10 +1,12 @@
 # Core dependencies
-langchain==0.3.0
-langgraph==0.2.0
-langchain-anthropic==0.2.0
-pydantic==2.8.0
-python-dotenv==1.0.1
+langchain>=0.3.0
+langgraph>=0.2.0
+langchain-openai>=0.2.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
 
 # Utility
-requests==2.32.0
-loguru==0.7.2
+requests>=2.0.0
+loguru>=0.7.0
+fastapi>=0.100.0
+uvicorn>=0.20.0
