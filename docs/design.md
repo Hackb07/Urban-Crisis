@@ -1,45 +1,71 @@
 # System Design: Urban Crisis Response Agent
 
 ## 1. High-Level Architecture
-The system is built using a cyclic state-machine architecture powered by **LangGraph** and **Claude 3.5 Sonnet (via OpenRouter)**.
-
-- **The City Simulator**: A background process that generates a stream of events and maintains the "ground truth" of the city (road status, unit positions).
-- **The Agentic Orchestrator (LangGraph)**: A directed cyclic graph (DCG) that manages the agent's state and determines the next action based on observations.
-- **The Tool Suite**: A set of LangChain-compatible tools that allow the agent to interact with the simulator.
-
-## 2. The Agentic Loop (LangGraph Workflow)
-
-The agent follows a professional cyclic graph designed for maximum autonomy and error recovery.
+The system is now designed as a decoupled **Client-Server architecture** to support professional cloud deployment.
 
 ```mermaid
 graph TD
-    Start([START]) --> Observe[Observe Node]
-    Observe --> Plan[Plan Node]
-    Plan --> Eval{Evaluate}
-    
-    Eval -- Tool Call --> Execute[Execute Node]
-    Execute --> Observe
-    
-    Eval -- Still Open --> Observe
-    Eval -- Goal Met --> End([END])
+    subgraph "Frontend (ReactJS / Render)"
+        Client[User Dashboard]
+    end
 
-    subgraph "Internal Reasoning (Claude 3.5)"
-        Plan
+    subgraph "Backend (FastAPI / Railway)"
+        Gateway[FastAPI REST API]
+        
+        subgraph "Agentic Core"
+            Graph[LangGraph State Machine]
+            LLM[Claude 3.5 Sonnet via OpenRouter]
+        end
+        
+        subgraph "Simulation Layer"
+            Sim[City Simulator]
+            Tools[Tool Suite]
+        end
+    end
+
+    Client <-->|HTTPS / JSON| Gateway
+    Gateway <--> Graph
+    Graph <--> Tools
+    Tools <--> Sim
+    Graph <--> LLM
+```
+
+### Component Breakdown
+- **Frontend**: Handles the visual state of the city. It polls the `/state` endpoint to update the map and sends commands via `/emergency` and `/infrastructure`.
+- **Backend Gateway**: A FastAPI server that handles CORS, request validation, and provides an interface to the agent.
+- **Agentic Core**: Uses **LangGraph** to maintain a persistent state of the crisis and orchestrate actions.
+- **Simulation Layer**: A high-fidelity Python simulator that tracks unit positions and road statuses in real-time.
+
+## 2. The Agentic Loop (LangGraph Workflow)
+
+The agent operates on a cyclic graph that ensures autonomy and error recovery.
+
+```mermaid
+graph TD
+    S([START]) --> O[Observe Node]
+    O --> P[Plan Node]
+    P --> E{Evaluate}
+    
+    E -- "Execute Tool" --> T[ToolNode]
+    T --> O
+    
+    E -- "Incidents Open" --> O
+    E -- "Goal Met" --> END([END])
+
+    subgraph "Reasoning"
+        P
     end
     
-    subgraph "Environment Interaction"
-        Execute
-        Observe
+    subgraph "Action"
+        T
+        O
     end
 ```
 
-- **Observe Node**: Ingests the latest city state and adds it to the conversation history as a HumanMessage.
-- **Plan Node**: Claude 3.5 Sonnet analyzes the state and decides which tools to call (e.g., `dispatch_unit`).
-- **Execute Node (ToolNode)**: Executes the tool calls against the simulator and returns the results as ToolMessages.
-- **Evaluate Node**: A conditional edge that checks:
-    - If tool calls were made $\rightarrow$ Go to `Execute`.
-    - If incidents are still open $\rightarrow$ Loop back to `Observe`.
-    - If all goals are met $\rightarrow$ `END`.
+- **Observe Node**: Fetches current city telemetry and adds it to the state.
+- **Plan Node**: Claude 3.5 Sonnet reasons about the crisis and decides which tools to invoke.
+- **Execute Node**: Performs the physical action in the simulator (e.g., dispatching a unit).
+- **Evaluate Node**: Determines if the system needs to loop back to re-observe or if the crisis is resolved.
 
 ## 3. Tool Definitions
 | Tool | Input | Output | Description |
@@ -50,12 +76,11 @@ graph TD
 | `add_emergency` | `type`, `loc`, `pri` | Incident ID | Adds a new emergency incident to the city. |
 
 ## 4. Data Model
-- **Incident**: `{id, type, location, priority, status (open/resolved), timestamp}`
-- **Resource**: `{id, type (Fire/Med/Police), location, status (idle/busy/broken)}`
-- **Road**: `{id, from, to, status (open/blocked)}`
+- **Incident**: `{id, type, location, priority, status, timestamp}`
+- **Resource**: `{id, type, location, status, assigned_incident}`
+- **Road**: `{id, start, end, status}`
 
-## 5. Failure Scenarios for Demo
-To win the competition, we simulate:
-1. **Priority Shift**: A Critical incident appears while managing Low-priority ones.
-2. **Real-time Adaptation**: A unit is dispatched $\rightarrow$ a road on its path is blocked $\rightarrow$ the agent detects the failure and reroutes.
-3. **Resource Failure**: A unit becomes "Broken" $\rightarrow$ the agent re-assigns the mission.
+## 5. Deployment Strategy
+- **Frontend**: Static site hosting on **Render**.
+- **Backend**: Containerized Python app on **Railway**.
+- **API**: RESTful communication over HTTPS with CORS enabled.
