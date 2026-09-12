@@ -1,25 +1,12 @@
 import os
 import re
 
-def remove_emojis(text):
-    # Regex to match most emojis and symbols
-    # This targets common emoji ranges and non-ASCII symbols
-    emoji_pattern = re.compile(
-        u'['
-        u'\U00010000-\U0010ffff'  # Supplemental Planes (Emojis)
-        u'-'            # Miscellaneous Symbols and Dingbats
-        u'-'            # Miscellaneous Technical
-        u'-'            # General Punctuation
-        u'-'            # Superscripts and Subscripts / Currency / Letterlike
-        u'-'            # Arrows
-        u'-'            # Dingbats
-        u']+', flags=re.UNICODE
-    )
-    return emoji_pattern.sub('', text)
+def remove_all_non_ascii(text):
+    # This removes all characters that are not in the standard ASCII range (0-127)
+    return re.sub(r'[^\x00-\x7F]+', '', text)
 
 def clean_project():
     root_dir = '.'
-    # Files to ignore
     ignore_dirs = {'.venv', '.git', '__pycache__'}
 
     for root, dirs, files in os.walk(root_dir):
@@ -32,7 +19,7 @@ def clean_project():
                     with open(file_path, 'r', encoding='utf-8') as f:
                         content = f.read()
 
-                    cleaned_content = remove_emojis(content)
+                    cleaned_content = remove_all_non_ascii(content)
 
                     if cleaned_content != content:
                         with open(file_path, 'w', encoding='utf-8') as f:

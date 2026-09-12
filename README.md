@@ -1,4 +1,4 @@
-# ️ Urban Crisis Response Agent
+#  Urban Crisis Response Agent
 **Autonomous Real-time Urban Crisis Response & Resource Orchestrator**
 
 A professional agentic system designed for the **Agentic AI Hackathon (Tech Zephyr 4.0 | IIT Bhubaneswar)**. This project demonstrates how an autonomous agent can manage a complex, evolving urban disaster scenario by interacting with a real-time simulator using a cyclic state-machine architecture.
@@ -23,7 +23,7 @@ The system is powered by **LangGraph** and **Claude 3.5 Sonnet**, implementing a
 
 ---
 
-## ️ Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Python 3.10+

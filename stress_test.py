@@ -55,7 +55,7 @@ def main():
     # Block a road on the path (in our simple simulator, we just block any road)
     # Since the simulator is simple, we'll block a road and then
     # force the agent to "re-observe" and "re-plan".
-    logger.info("️  SIMULATING FAILURE: Blocking road r2_3...")
+    logger.info("  SIMULATING FAILURE: Blocking road r2_3...")
     tools.block_road("r2_3")
 
     # STEP 3: Agent Detection and Recovery

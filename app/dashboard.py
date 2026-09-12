@@ -19,7 +19,7 @@ def log_message(msg):
     st.session_state.logs.append(f"[{time.strftime('%H:%M:%S')}] {msg}")
 
 # --- Sidebar: Controls ---
-st.sidebar.title("️ Control Panel")
+st.sidebar.title(" Control Panel")
 
 st.sidebar.subheader(" Trigger Emergencies")
 with st.sidebar.form("emergency_form"):
@@ -43,11 +43,11 @@ with st.sidebar.form("infra_form"):
             log_message(f"Road {road_id} OPENED")
 
 st.sidebar.markdown("---")
-if st.sidebar.button("️ Clear Logs"):
+if st.sidebar.button(" Clear Logs"):
     st.session_state.logs = []
 
 # --- Main UI ---
-st.title("️ Urban Crisis Response Dashboard")
+st.title(" Urban Crisis Response Dashboard")
 st.markdown("Autonomous Resource Orchestration powered by **LangGraph & Claude 3.5 Sonnet**")
 
 # Top row: Stats
@@ -93,7 +93,7 @@ with c1:
             log_message("Agent completed one iteration of the LangGraph loop.")
             st.rerun()
 
-    if st.button("️ Advance Simulator (1 Tick)", use_container_width=True):
+    if st.button(" Advance Simulator (1 Tick)", use_container_width=True):
         st.session_state.sim.update()
         log_message("Simulator advanced by 1 tick.")
         st.rerun()
