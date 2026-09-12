@@ -19,9 +19,9 @@ def log_message(msg):
     st.session_state.logs.append(f"[{time.strftime('%H:%M:%S')}] {msg}")
 
 # --- Sidebar: Controls ---
-st.sidebar.title("🕹️ Control Panel")
+st.sidebar.title("️ Control Panel")
 
-st.sidebar.subheader("🚨 Trigger Emergencies")
+st.sidebar.subheader(" Trigger Emergencies")
 with st.sidebar.form("emergency_form"):
     e_type = st.selectbox("Incident Type", ["Fire", "Medical", "Police"])
     e_loc = st.slider("Location", 0, 9, 5)
@@ -30,7 +30,7 @@ with st.sidebar.form("emergency_form"):
         inc_id = st.session_state.tools.add_emergency(e_type, e_loc, e_pri)
         log_message(f"Created {e_type} emergency {inc_id} at loc {e_loc} (Pri: {e_pri})")
 
-st.sidebar.subheader("🚧 Infrastructure")
+st.sidebar.subheader(" Infrastructure")
 with st.sidebar.form("infra_form"):
     road_id = st.text_input("Road ID (e.g., r0_1)", "r0_1")
     action = st.selectbox("Action", ["Block Road", "Unblock Road"])
@@ -43,11 +43,11 @@ with st.sidebar.form("infra_form"):
             log_message(f"Road {road_id} OPENED")
 
 st.sidebar.markdown("---")
-if st.sidebar.button("🗑️ Clear Logs"):
+if st.sidebar.button("️ Clear Logs"):
     st.session_state.logs = []
 
 # --- Main UI ---
-st.title("🏙️ Urban Crisis Response Dashboard")
+st.title("️ Urban Crisis Response Dashboard")
 st.markdown("Autonomous Resource Orchestration powered by **LangGraph & Claude 3.5 Sonnet**")
 
 # Top row: Stats
@@ -58,7 +58,7 @@ col2.metric("Active Units", len([r for r in state['resources'].values() if r['st
 col3.metric("City Tick", state['tick'])
 
 # Middle row: The Map (Visual representation of the 1D city)
-st.subheader("📍 City Map")
+st.subheader(" City Map")
 map_cols = st.columns(10)
 for i in range(10):
     with map_cols[i]:
@@ -85,29 +85,29 @@ st.markdown("---")
 c1, c2 = st.columns([1, 2])
 
 with c1:
-    st.subheader("🤖 Agent Action")
-    if st.button("🚀 Run Agent Iteration", use_container_width=True):
+    st.subheader(" Agent Action")
+    if st.button(" Run Agent Iteration", use_container_width=True):
         with st.spinner("Claude is reasoning..."):
             # Run the agent iteration
             result = st.session_state.agent.run_iteration()
             log_message("Agent completed one iteration of the LangGraph loop.")
             st.rerun()
 
-    if st.button("⏱️ Advance Simulator (1 Tick)", use_container_width=True):
+    if st.button("️ Advance Simulator (1 Tick)", use_container_width=True):
         st.session_state.sim.update()
         log_message("Simulator advanced by 1 tick.")
         st.rerun()
 
 with c2:
-    st.subheader("📜 Agent Reasoning Logs")
+    st.subheader(" Agent Reasoning Logs")
     log_container = st.container(height=300)
     with log_container:
         for log in reversed(st.session_state.logs):
             st.text(log)
 
 # Data Tables (Expanders)
-with st.expander("📋 Resource Details"):
+with st.expander(" Resource Details"):
     st.table(pd.DataFrame.from_dict(state['resources'], orient='index'))
 
-with st.expander("🚨 Incident Details"):
+with st.expander(" Incident Details"):
     st.table(pd.DataFrame.from_dict(state['incidents'], orient='index'))

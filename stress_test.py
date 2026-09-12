@@ -23,7 +23,7 @@ def main():
     sim_thread = threading.Thread(target=run_simulator, args=(sim,), daemon=True)
     sim_thread.start()
 
-    print("\n--- 🚨 STARTING ADAPTATION STRESS TEST 🚨 ---")
+    print("\n---  STARTING ADAPTATION STRESS TEST  ---")
 
     # STEP 1: Create a high priority incident
     logger.info("STEP 1: Creating a critical incident at location 5")
@@ -42,10 +42,10 @@ def main():
             break
 
     if not active_unit:
-        print("❌ Error: Agent failed to dispatch a unit.")
+        print(" Error: Agent failed to dispatch a unit.")
         return
 
-    logger.info(f"✅ Success: {active_unit} dispatched to inc_1")
+    logger.info(f" Success: {active_unit} dispatched to inc_1")
 
     # STEP 2: Mid-transit blockage
     # We wait until the unit is close to the target
@@ -55,7 +55,7 @@ def main():
     # Block a road on the path (in our simple simulator, we just block any road)
     # Since the simulator is simple, we'll block a road and then
     # force the agent to "re-observe" and "re-plan".
-    logger.info("⚠️  SIMULATING FAILURE: Blocking road r2_3...")
+    logger.info("️  SIMULATING FAILURE: Blocking road r2_3...")
     tools.block_road("r2_3")
 
     # STEP 3: Agent Detection and Recovery
@@ -69,7 +69,7 @@ def main():
 
     print("\n--- Final Stress Test State ---")
     print(sim.get_state())
-    print("\n✅ Stress test completed. Check the logs to see the Agent's reasoning loop!")
+    print("\n Stress test completed. Check the logs to see the Agent's reasoning loop!")
 
 if __name__ == "__main__":
     main()

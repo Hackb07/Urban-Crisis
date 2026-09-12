@@ -42,7 +42,7 @@ def main():
     try:
         agent.run_iteration()
     except Exception as e:
-        print(f"\n⚠️  Error running agent: {e}")
+        print(f"\n️  Error running agent: {e}")
         print("\nNote: Make sure you have added your ANTHROPIC_API_KEY to the .env file!")
 
     print("\n--- Final City State ---")
