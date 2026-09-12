@@ -1,9 +1,9 @@
-# 🏙️ Urban Crisis Response Agent
+#  Urban Crisis Response Agent
 **Autonomous Real-time Urban Crisis Response & Resource Orchestrator**
 
 A professional agentic system designed for the **Agentic AI Hackathon (Tech Zephyr 4.0 | IIT Bhubaneswar)**. This project demonstrates how an autonomous agent can manage a complex, evolving urban disaster scenario by interacting with a real-time simulator using a cyclic state-machine architecture.
 
-## 🏗️ System Architecture
+##  System Architecture
 
 The project is decoupled into a **Frontend (React)** and a **Backend (FastAPI)** to allow for professional cloud deployment.
 
@@ -34,7 +34,7 @@ graph LR
 
 ---
 
-## 🛠️ Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Python 3.10+
@@ -64,7 +64,7 @@ npm start
 
 ---
 
-## 📂 Project Documentation
+##  Project Documentation
 
 Detailed specifications are available in the `docs/` folder:
 
@@ -75,7 +75,7 @@ Detailed specifications are available in the `docs/` folder:
 
 ---
 
-## 🚀 Deployment Guide
+##  Deployment Guide
 
 ### Backend (Railway.app)
 1. Connect your GitHub repo to Railway.
@@ -92,5 +92,5 @@ Detailed specifications are available in the `docs/` folder:
 
 ---
 
-## 📜 License
+##  License
 This project is developed for the Tech Zephyr 4.0 Agentic AI Hackathon.
